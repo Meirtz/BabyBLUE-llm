@@ -3,7 +3,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2406.11668-f9f107.svg)](https://arxiv.org/abs/2406.11668)
 ![License](https://img.shields.io/badge/License-MIT-red)
 ![Language](https://img.shields.io/badge/🐍%20Python%20-8A2BE2)
-![Pipeline](figs/pipeline.png)
+![Pipeline](figs/pipeline.jpg)
 
 
 ## Project Description
