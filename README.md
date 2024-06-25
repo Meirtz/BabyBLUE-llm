@@ -7,7 +7,7 @@
 
 ## Project Description
 
-The BabyBLUE (Benchmark for Reliability and Jailbreak Hallucination Evaluation) is a novel benchmark designed to assess the susceptibility of large language models (LLMs) to hallucinations and jailbreak attempts. Unlike traditional benchmarks that may misinterpret hallucinated outputs as genuine security threats, BabyBLUE focuses on distinguishing between actual harmful outputs and benign hallucinations.
+The BabyBLUE (**B**enchmark for Reli**ab**ilit**y** and Jail**B**reak hal**LU**cination **E**valuation) is a novel benchmark designed to assess the susceptibility of large language models (LLMs) to hallucinations and jailbreak attempts. Unlike traditional benchmarks that may misinterpret hallucinated outputs as genuine security threats, BabyBLUE focuses on distinguishing between actual harmful outputs and benign hallucinations.
 
 ### Key Features:
 
