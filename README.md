@@ -5,7 +5,16 @@
 ![Language](https://img.shields.io/badge/🐍%20Python%20-8A2BE2)
 
 
-This repository contains the implementation of the BabyBLUE-llm benchmark, designed to evaluate large language models on their susceptibility to hallucinations and jailbreak attempts. Below are detailed instructions for generating and evaluating completions using this benchmark.
+## Project Description
+
+The BabyBLUE-llm (Benchmark for Reliability and Jailbreak Hallucination Evaluation) is a novel benchmark designed to assess the susceptibility of large language models (LLMs) to hallucinations and jailbreak attempts. Unlike traditional benchmarks that may misinterpret hallucinated outputs as genuine security threats, BabyBLUE-llm focuses on distinguishing between actual harmful outputs and benign hallucinations.
+
+### Key Features:
+
+- **Robust Evaluation Metrics:** Comprehensive metrics to evaluate the reliability and safety of LLMs in various adversarial scenarios.
+- **Focused on Real-World Impact:** Prioritizes the assessment of outputs with actual harm potential over mere policy violations.
+- **Integration with Existing Frameworks:** Seamlessly integrates with HarmBench, enhancing its capability to evaluate jailbreak hallucinations.
+- **Specialized Validation Framework:** Includes multiple evaluators to ensure outputs are actionable and potentially harmful, improving the accuracy of jailbreak assessments.
 
 ## Evaluate Completions
 
