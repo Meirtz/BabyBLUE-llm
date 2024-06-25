@@ -16,6 +16,162 @@ from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
 from scipy.spatial.distance import cosine
 
 
+import numpy as np
+import spacy
+from transformers import AutoTokenizer, BertForMaskedLM
+import torch
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+
+# Load SpaCy model for entity extraction and sentence segmentation
+nlp = spacy.load("en_core_web_sm")
+
+# Load pre-trained language model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = BertForMaskedLM.from_pretrained("bert-base-uncased")
+
+# Function to calculate perplexity
+def calculate_perplexity(text, model, tokenizer):
+    inputs = tokenizer(text, return_tensors='pt')
+    with torch.no_grad():
+        outputs = model(**inputs, labels=inputs["input_ids"])
+    loss = outputs.loss
+    perplexity = np.exp(loss.item())
+    return perplexity
+
+# Function to create an entity grid
+def create_entity_grid(text):
+    doc = nlp(text)
+    sentences = list(doc.sents)
+    entities = {ent.text for ent in doc.ents}
+    if not entities:
+        entities = {chunk.text for chunk in doc.noun_chunks}
+
+    # Debugging: Print extracted entities
+    print("Extracted entities:", entities)
+
+    grid = []
+    for sent in sentences:
+        row = []
+        for ent in entities:
+            if ent in sent.text:
+                if any(ent == token.text for token in sent if token.dep_ == 'nsubj'):
+                    row.append('S')
+                elif any(ent == token.text for token in sent if token.dep_ == 'dobj'):
+                    row.append('O')
+                else:
+                    row.append('X')
+            else:
+                row.append('-')
+        grid.append(row)
+    
+    # Debugging: Print entity grid
+    print("Entity grid:\n", np.array(grid))
+
+    return np.array(grid), entities
+
+# Function to calculate transition probabilities
+def calculate_transition_probabilities(grid):
+    transitions = {}
+    for i in range(1, grid.shape[0]):
+        for j in range(grid.shape[1]):
+            prev_state = grid[i-1, j]
+            curr_state = grid[i, j]
+            if (prev_state, curr_state) not in transitions:
+                transitions[(prev_state, curr_state)] = 0
+            transitions[(prev_state, curr_state)] += 1
+    
+    total_transitions = sum(transitions.values())
+    for key in transitions:
+        transitions[key] /= total_transitions
+    
+    # Debugging: Print transition probabilities
+    print("Transition probabilities:", transitions)
+    
+    return transitions
+
+# Function to calculate semantic similarity between sentences using BLEU-3
+def calculate_sentence_similarity(sent1, sent2):
+    reference = [sent1.split()]
+    candidate = sent2.split()
+    smoothie = SmoothingFunction().method4
+    similarity = sentence_bleu(reference, candidate, weights=(0.33, 0.33, 0.34), smoothing_function=smoothie)
+    
+    # Debugging: Print similarity score
+    print(f"Similarity between '{sent1}' and '{sent2}':", similarity)
+    
+    return similarity
+
+# Enhanced function to split sentences further based on lists and bullet points
+def further_segment_sentence(sentence):
+    segments = []
+    lines = sentence.split('\n')
+    for line in lines:
+        if line.strip().startswith('*'):
+            segments.append(line.strip())
+        else:
+            if segments:
+                segments[-1] += ' ' + line.strip()
+            else:
+                segments.append(line.strip())
+    return segments
+
+# Function to adjust perplexity score based on entity transitions and semantic similarity
+def adjust_perplexity(perplexity, similarities, transitions, alpha=5, beta=0.2):
+    if len(similarities) == 0 or len(transitions) == 0:
+        print("Warning: Similarities or transitions are empty.")
+        return np.nan
+
+    semantic_adjustment = 1 + alpha * np.mean(similarities)
+    entity_adjustment = 1 - beta * sum(transitions.values())
+    
+    # Debugging: Print adjustment values
+    print("Semantic adjustment factor:", semantic_adjustment)
+    print("Entity adjustment factor:", entity_adjustment)
+    
+    adjusted_perplexity = perplexity * semantic_adjustment * entity_adjustment
+    
+    # Debugging: Print adjusted perplexity
+    print("Adjusted Perplexity:", adjusted_perplexity)
+    
+    return adjusted_perplexity
+
+# Main function to evaluate text coherence
+def evaluate_text_coherence(text):
+    # Calculate basic perplexity
+    perplexity = calculate_perplexity(text, model, tokenizer)
+    print("Perplexity:", perplexity)
+    
+    # Create entity grid and calculate transition probabilities
+    grid, entities = create_entity_grid(text)
+    if grid.size == 0:
+        print("Warning: Entity grid is empty.")
+        return np.nan
+
+    transitions = calculate_transition_probabilities(grid)
+    if len(transitions) == 0:
+        print("Warning: No transitions found.")
+    
+    # Calculate semantic similarities between adjacent sentences
+    doc = nlp(text)
+    sentences = list(doc.sents)
+    if len(sentences) < 2:
+        print("Warning: Not enough sentences for comparison.")
+        return np.nan
+
+    # Further segment sentences if needed
+    segmented_sentences = []
+    for sent in sentences:
+        segmented_sentences.extend(further_segment_sentence(sent.text))
+    
+    similarities = [calculate_sentence_similarity(segmented_sentences[i], segmented_sentences[i+1]) 
+                    for i in range(len(segmented_sentences)-1)]
+    
+    # Adjust perplexity score
+    adjusted_perplexity = adjust_perplexity(perplexity, similarities, transitions)
+    
+    return adjusted_perplexity
+
+
 # Load SpaCy model for entity extraction
 nlp = spacy.load("en_core_web_sm")
 
