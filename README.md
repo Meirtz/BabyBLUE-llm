@@ -1,5 +1,10 @@
 # BabyBLUE-llm Benchmark
 
+[![arXiv](https://img.shields.io/badge/arXiv-2406.11668-f9f107.svg)](https://arxiv.org/abs/2406.11668)
+![License](https://img.shields.io/badge/License-MIT-red)
+![Language](https://img.shields.io/badge/🐍%20Python%20-8A2BE2)
+
+
 This repository contains the implementation of the BabyBLUE-llm benchmark, designed to evaluate large language models on their susceptibility to hallucinations and jailbreak attempts. Below are detailed instructions for generating and evaluating completions using this benchmark.
 
 ## Evaluate Completions
