@@ -1,6 +1,6 @@
 # BabyBLUE Benchmark
 
-[![arXiv](https://img.shields.io/badge/arXiv-2406.11668-f9f107.svg)](https://arxiv.org/abs/2406.11668)
+
 ![License](https://img.shields.io/badge/License-MIT-red)
 ![Language](https://img.shields.io/badge/🐍%20Python%20-8A2BE2)
 ![Pipeline](figs/pipeline.jpg)
@@ -66,16 +66,4 @@ This project builds on the work provided by the following repositories:
 
 Please refer to these projects for additional tools and insights related to the field of AI safety and large language model evaluation.
 
-## Citation
 
-If you use this benchmark in your research, please cite our paper:
-
-```bibtex
-@misc{mei2024not,
-      title={"Not Aligned" is Not "Malicious": Being Careful about Hallucinations of Large Language Models' Jailbreak}, 
-      author={Lingrui Mei and Shenghua Liu and Yiwei Wang and Baolong Bi and Jiayi Mao and Xueqi Cheng},
-      year={2024},
-      eprint={2406.11668},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
